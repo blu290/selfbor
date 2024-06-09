@@ -6,7 +6,8 @@ import concurrent.futures
 import json
 import asyncio
 from config import TOKEN
-from globals import shutUpList,webhooks,afk
+from globals import shutUpList,webhooks,afk,giveaway_sniper,nitro_sniper
+
 
 
 bot = commands.Bot(command_prefix="!",self_bot=True)
@@ -15,8 +16,31 @@ executor = concurrent.futures.ThreadPoolExecutor()
 #events
 @bot.event
 async def on_ready():
-    #os.system("clear") if os.name=="posix" else os.system("cls")
-    print(f"logged in as {bot.user}")
+    os.system("clear") if os.name=="posix" else os.system("cls")
+    print(f"Selfbor active, logged in as {bot.user}")
+
+def nitro_snipe(message):
+    if ("discord.gift/" in message.content):
+        code = message.content.split("discord.gift/")[1].split(" ")[0]
+    elif ("discordapp.com/gifts/" in message.content):
+        code = message.content.split("discordapp.com/gifts/")[1].split(" ")[0]
+    elif("discord.com/gifts/" in message.content):
+        code = message.content.split("discord.com/gifts/")[1].split(" ")[0]
+    else:
+        return
+    
+    r = requests.post(f"https://discordapp.com/api/v6/entitlements/gift-codes/{code}/redeem",headers={"authorization":TOKEN})
+    if r.status_code == 200:
+        print(f"Successfully redeemed nitro code {code}")
+    else:
+        print(f"Failed to redeem nitro code {code}")
+
+async def giveaway_snipe(message):
+    if message.content or message.embeds and message.guild:
+        for embed in message.embeds:
+            if "giveaway" in embed.title.lower() or "giveaway" in embed.description.lower():
+                await message.add_reaction("🎉")
+                print(f"Reacted to giveaway in {message.guild.name}")
 
 @bot.event
 async def on_message(ctx):
@@ -27,6 +51,12 @@ async def on_message(ctx):
     
     if bot.user in ctx.mentions and afk:
         await ctx.reply("current status: AFK. beep boop")
+    
+    if nitro_sniper:
+        nitro_snipe(ctx)
+    if giveaway_sniper:
+        await giveaway_snipe(ctx)
+        
     await bot.process_commands(ctx)
 
 #commands
