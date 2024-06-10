@@ -6,7 +6,7 @@ import concurrent.futures
 import json
 import asyncio
 from config import TOKEN
-from globals import shutUpList,webhooks,afk,giveaway_sniper,nitro_sniper
+from globals import shutUpList,webhooks,afk,giveaway_sniper,nitro_sniper,antiCrazy
 
 
 
@@ -54,9 +54,14 @@ async def on_message(ctx):
     
     if nitro_sniper:
         nitro_snipe(ctx)
+
     if giveaway_sniper:
         await giveaway_snipe(ctx)
-        
+    
+    if antiCrazy:
+        if ctx.author.id == "1171484764256075888" and "ON" in ctx.content:
+            await ctx.send("!off")
+
     await bot.process_commands(ctx)
 
 #commands

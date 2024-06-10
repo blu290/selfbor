@@ -13,3 +13,5 @@ nitro_sniper = True
 global giveaway_sniper
 giveaway_sniper = True
 
+global antiCrazy
+antiCrazy = True
