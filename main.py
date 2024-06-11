@@ -6,7 +6,7 @@ import concurrent.futures
 import json
 import asyncio
 from config import TOKEN
-from globals import shutUpList,webhooks,afk,giveaway_sniper,nitro_sniper,antiCrazy
+from globals import shutUpList,webhooks,afk,giveaway_sniper,nitro_sniper,antiCrazy,message_logger,message_logger_url
 
 
 
@@ -61,6 +61,23 @@ async def on_message(ctx):
     if antiCrazy and ctx.author.id == 1171484764256075888 and "ON" in ctx.content:
         await ctx.reply("!off")
 
+    if message_logger and not ctx.webhook_id:
+        try:
+            channel = str(ctx.channel)
+            guild = str(ctx.guild)
+            message = str(ctx.content)
+            data = {"content":f"**Guild:** {guild}\n**Channel:** {channel}\n**Message:** {message}",
+                "username":str(ctx.author.global_name),
+                "avatar_url":str(ctx.author.avatar)
+                }
+            headers = {
+            'Content-Type': 'application/json',
+            }
+            response = requests.post(message_logger_url,data=json.dumps(data),headers=headers)
+            print(response.status_code)
+        except Exception as e:
+            pass
+        
     await bot.process_commands(ctx)
 
 #commands

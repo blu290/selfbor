@@ -50,12 +50,12 @@ class Misc(commands.Cog):
         global afk
         await ctx.message.delete()
         afk = not(afk)
-
+    
     @commands.command()
-    async def afk(self,ctx):
-        global afk
+    async def log(self,ctx):
+        global message_logger
         await ctx.message.delete()
-        afk = not(afk)
+        message_logger = not(message_logger)
     
 
 async def setup(bot):
