@@ -58,18 +58,12 @@ async def on_message(ctx):
     if giveaway_sniper:
         await giveaway_snipe(ctx)
     
-    if antiCrazy:
-        if ctx.author.id == "1171484764256075888" and "ON" in ctx.content:
-            await ctx.send("!off")
+    if antiCrazy and ctx.author.id == 1171484764256075888 and "ON" in ctx.content:
+        await ctx.reply("!off")
 
     await bot.process_commands(ctx)
 
 #commands
-@bot.command()
-async def afk(ctx):
-    global afk
-    await ctx.message.delete()
-    afk = not(afk)
     
 @bot.command()
 async def echowh(ctx,*args):

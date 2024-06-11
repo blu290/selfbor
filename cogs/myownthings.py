@@ -8,7 +8,7 @@ class MyOwnThings(commands.Cog):
         self.bot=bot
 
     @commands.command()
-    async def Crezi(self,ctx,*args:str):
+    async def crezi(self,ctx,*args:str):
         await ctx.message.delete()
         antiCrazy = not(antiCrazy)
 
