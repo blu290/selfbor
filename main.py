@@ -120,7 +120,7 @@ async def flags(ctx):
     ```
     """
     await ctx.send(string)
-    
+
 async def loadCogs(bot):
     for filename in os.listdir("./cogs"):
         if filename.endswith(".py"):
@@ -131,3 +131,4 @@ async def main():
     await bot.start(TOKEN)
 if __name__ == "__main__":
     asyncio.run(main())
+
