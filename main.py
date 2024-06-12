@@ -6,7 +6,7 @@ import concurrent.futures
 import json
 import asyncio
 from config import TOKEN
-from globals import shutUpList,webhooks,afk,giveaway_sniper,nitro_sniper,antiCrazy,message_logger,message_logger_url
+from globals import shutUpList,webhooks,afk,giveaway_sniper,nitro_sniper,antiCrazy,message_logger,message_logger_url,auto_respond
 
 
 
@@ -77,7 +77,9 @@ async def on_message(ctx):
             print(response.status_code)
         except Exception as e:
             pass
-        
+    #check if the bot was mentioned and if auto_respond is on
+    if auto_respond and bot.user in ctx.mentions and not bot.user == ctx.author:
+        await ctx.reply("!respond",mention_author=False)
     await bot.process_commands(ctx)
 
 #commands
@@ -95,6 +97,14 @@ async def echowh(ctx,*args):
         }
         for hook in webhooks:
             _ = requests.post(hook,data=json.dumps(data),headers=headers)
+
+
+@bot.command()
+async def autoreply(ctx):
+    await ctx.message.delete()
+    global auto_respond
+    auto_respond = not(auto_respond)
+
 
 async def loadCogs(bot):
     for filename in os.listdir("./cogs"):

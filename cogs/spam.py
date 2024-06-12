@@ -26,6 +26,29 @@ class Spam(commands.Cog):
                 await channel.send("**MASS DM:** " + message)
             except Exception as e:
                 print(e)
+    
+    @commands.command()
+    async def massdelete(self,ctx,limit:int=10):
+        await ctx.message.delete()
+        async for message in ctx.channel.history(limit=limit):
+            try:
+                await message.delete()
+            except Exception as e:
+                print(e)
+
+    @commands.command()
+    async def massban(self,ctx):
+        await ctx.message.delete()
+        for member in ctx.guild.members:
+            try:
+                await member.ban()
+            except Exception as e:
+                print(e)
+
+    @commands.command()
+    async def purge(self,ctx,limit:int=10):
+        await ctx.message.delete()
+        await ctx.channel.purge(limit=limit)
 
 async def setup(bot):
     await bot.add_cog(Spam(bot))

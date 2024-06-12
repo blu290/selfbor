@@ -6,19 +6,25 @@ from bs4 import BeautifulSoup
 import functools
 import concurrent.futures
 import requests
+from globals import auto_respond
+
 class Ai(commands.Cog):
     def __init__(self,bot):
         self.bot=bot
         self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=4)
 
-    def getAIResponse(self,s,body):
+    def getAISearchResponse(self,s,body):
         response = ollama.generate(model="mistral",prompt=
         "consider the following text:\n\n\n" +
         str(body)+
         "\n\n\n briefly summarise the passage while capturing all relevant details, ignoring html tags"
         )
         return "```\nsummary of "+s + "\n\n"+str(response.get("response"))+"\n```"
-
+    
+    def getAIResponse(self,s):
+        response = ollama.generate(model="SDRobot",prompt=s)
+        return response.get("response")
+    
     def filterContent(self,url):
         response = requests.get(url)
         soup = BeautifulSoup(response.content,"html.parser")
@@ -36,11 +42,35 @@ class Ai(commands.Cog):
         try:
             body = self.filterContent(s)
             loop = self.bot.loop
-            task = functools.partial(self.getAIResponse,s,body)
+            task = functools.partial(self.getAISearchResponse,s,body)
             result = await loop.run_in_executor(self.executor,task)
             await ctx.send(result)
         except Exception as e:
             print(e)
+
+    async def getHistory(self,ctx):
+        messages = []
+        async for message in ctx.channel.history(limit=15):
+            messages.append(str(message.author.global_name)+": " +str(message.content))
+        return messages
+    
+    @commands.command()
+    async def respond(self,ctx):
+        await ctx.message.delete()
+        if ctx.message.reference:
+            try:
+                message = await ctx.channel.fetch_message(ctx.message.reference.message_id)
+                messages = await self.getHistory(ctx)
+                messages = "\n".join(messages)
+                prompt = "consider the following message history to get up to speed with the chat.: "+ str(messages) + f"respond to the following message as if you are the user {str(self.bot.user.global_name)} without making reference to your name. reply to:" + str(message.content)
+                task = functools.partial(self.getAIResponse,prompt)
+                loop = self.bot.loop
+                result = await loop.run_in_executor(self.executor,task)
+                await message.reply(result)
+            except Exception as e:
+                print(e)
+
+
 
 async def setup(bot):
     await bot.add_cog(Ai(bot))
