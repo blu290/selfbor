@@ -104,8 +104,23 @@ async def autoreply(ctx):
     await ctx.message.delete()
     global auto_respond
     auto_respond = not(auto_respond)
+    await ctx.send("auto_respond is now " + "enabled" if auto_respond else "disabled")
 
-
+@bot.command()
+async def flags(ctx):
+    #display all global variable values
+    await ctx.message.delete()
+    string = f"""```
+    nitro_sniper: {str(nitro_sniper)}
+    giveaway_sniper: {str(giveaway_sniper)}
+    afk: {str(afk)}
+    antiCrazy: {str(antiCrazy)}
+    message_logger: {str(message_logger)}
+    auto_respond: {str(auto_respond)}
+    ```
+    """
+    await ctx.send(string)
+    
 async def loadCogs(bot):
     for filename in os.listdir("./cogs"):
         if filename.endswith(".py"):
