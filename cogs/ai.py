@@ -48,9 +48,9 @@ class Ai(commands.Cog):
         except Exception as e:
             print(e)
 
-    async def getHistory(self,ctx):
+    async def getHistory(self,ctx,r):
         messages = []
-        async for message in ctx.channel.history(limit=10):
+        async for message in ctx.channel.history(limit=3,before=r):
             messages.append(str((message.author.global_name if message.author.global_name else "You"))+": " +str(message.content))
         return messages[::-1]
     
@@ -60,7 +60,7 @@ class Ai(commands.Cog):
         if ctx.message.reference:
             try:
                 message = await ctx.channel.fetch_message(ctx.message.reference.message_id)
-                messages = await self.getHistory(ctx)
+                messages = await self.getHistory(ctx,message)
                 messages = "\n".join(messages)
                 prompt = "consider the following message history to get up to speed with the chat. do not focus too much on these however use them for context. HISTORY_START: "+ str(messages) + f"HISTORY_END\n\nrespond to the following message as if you are the user {str(self.bot.user.global_name)} without making reference to your name. reply to the following: " + str(message.content)
                 task = functools.partial(self.getAIResponse,prompt)

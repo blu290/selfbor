@@ -33,18 +33,7 @@ class Misc(commands.Cog):
             shutUpList.remove(member)
             await ctx.message.delete()
 
-    @commands.command()
-    async def nitroSnipe(self,ctx):
-        await ctx.message.delete()
-        global nitro_sniper
-        nitro_sniper = not(nitro_sniper)
 
-    @commands.command()
-    async def giveawaySnipe(self,ctx):
-        await ctx.message.delete()
-        global giveaway_sniper
-        giveaway_sniper = not(giveaway_sniper)
-    
     @commands.command()
     async def afk(self,ctx):
         global afk
